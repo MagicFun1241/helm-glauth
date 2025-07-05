@@ -1,6 +1,6 @@
 {{- if eq .Values.backend.type "database" }}
 {{- if eq .Values.database.engine "sqlite" }}
-{{- if .Values.database.shell }}
+{{- if .Values.database.shell | default true }}
 apiVersion: v1 
 kind: Pod 
 metadata: 
