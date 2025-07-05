@@ -40,7 +40,9 @@ config:
     # You may wish to override the access type; for instance if you
     # are setting up a single node with hostPath, since hostPath
     # does not support multiple access but we are requesting that.
-    # access: readWriteOnce
+    # Note: When using PostgreSQL as the database engine, ReadWriteOnce
+    # is automatically used. You can override this by setting:
+    # access: ReadWriteMany
     #
     # Or you could make sure that a different storageClass
     # is picked upon instantiation.

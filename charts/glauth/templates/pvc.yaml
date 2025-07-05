@@ -7,7 +7,11 @@ metadata:
 spec:
   accessModes:
 {{- if not .Values.config.storage.access }}
+{{- if and (eq .Values.backend.type "database") (eq .Values.database.engine "postgres") }}
+    - ReadWriteOnce
+{{- else }}
     - ReadWriteMany
+{{- end }}
 {{- else }}
     - "{{ .Values.config.storage.access }}"
 {{- end }}
