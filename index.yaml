@@ -3,6 +3,16 @@ entries:
   glauth:
   - apiVersion: v2
     appVersion: 2.0.1
+    created: "2025-07-05T22:04:24.784948043Z"
+    description: A Helm chart to host GLAuth in a Kubernetes cluster
+    digest: 5d460a5f50d4638c65677e1eb643d6c9445fffff22d4c0453e4068d9fc5f8b8a
+    name: glauth
+    type: application
+    urls:
+    - https://github.com/nnstd/helm-glauth/releases/download/glauth-0.2.7/glauth-0.2.7.tgz
+    version: 0.2.7
+  - apiVersion: v2
+    appVersion: 2.0.1
     created: "2025-07-05T21:57:07.529804474Z"
     description: A Helm chart to host GLAuth in a Kubernetes cluster
     digest: fb0259998aad81d5936e8f355de7ac87da7b1c4f74a389c0585992a756c1e8f2
@@ -81,4 +91,4 @@ entries:
     urls:
     - https://github.com/nnstd/helm-glauth/releases/download/glauth-0.1.0/glauth-0.1.0.tgz
     version: 0.1.0
-generated: "2025-07-05T21:57:07.529837446Z"
+generated: "2025-07-05T22:04:24.784984201Z"
