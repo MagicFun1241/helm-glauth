@@ -15,6 +15,6 @@ data:
 {{ tpl (.Files.Get "config/sample-postgres.cfg") . | indent 4 }}
   {{- else }}
   config.cfg: |-
-{{ .Files.Get "config/sample-database.cfg" | indent 4 }}
+{{ .Files.Get "config/sample-sqlite.cfg" | indent 4 }}
   {{- end }}
 {{- end}}

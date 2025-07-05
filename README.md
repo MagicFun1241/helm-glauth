@@ -72,7 +72,7 @@ You can also specify `existingClaim: true` to use a persistent volume that you w
 
 ### backend
 
-This will determine which predefined configuration file (`sample-simple.cfg` or `sample-database.cfg`) will be installed in the configuration map used by GLAuth to retrieve its configuration.
+This will determine which predefined configuration file (`sample-simple.cfg` or `sample-sqlite.cfg`) will be installed in the configuration map used by GLAuth to retrieve its configuration.
 
 When you are ready to run in production, you should create your own configuration file and use it as `file: <your file name>`
 
