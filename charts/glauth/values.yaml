@@ -83,7 +83,7 @@ database:
     # Only required when createResources is false
     connectionString:
     
-    # plugin (default: bin/postgres-linux-amd64.so)
+    # plugin (default: /app/postgres.so)
     plugin: 
     
     # pluginHandler (default: NewPostgresHandler)
