@@ -83,9 +83,11 @@ database:
     # Only required when createResources is false
     connectionString:
     
-    # Plugin configuration
-    plugin: "bin/postgres-linux-amd64.so"
-    pluginHandler: "NewPostgresHandler"
+    # plugin (default: bin/postgres-linux-amd64.so)
+    plugin: 
+    
+    # pluginHandler (default: NewPostgresHandler)
+    pluginHandler:
     
     # Base DN for LDAP structure
     baseDN: "dc=glauth,dc=com"
@@ -102,6 +104,15 @@ database:
     # When true, the connection string will be automatically sourced from the
     # generated secret (postgres-user) via POSTGRES_CONNECTION_STRING environment variable
     createResources: false
+    
+    # Secret name to create for PostgreSQL credentials (used by the PostgreSQL CRD)
+    # The actual secret created by the operator may have a different name
+    secretName: "postgres-user"
+    
+    # Actual secret name created by the PostgreSQL operator (if different from secretName)
+    # Set this to the actual secret name if the operator creates a different name
+    # Example: "postgres-user-glauth"
+    existingSecretName:
 
 service:
   name: glauth
