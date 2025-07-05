@@ -10,7 +10,7 @@ Helm's [documentation](https://helm.sh/docs) to get started.
 Once Helm has been set up correctly, add the repo as follows:
 
 ```
-helm repo add glauth https://glauth.github.io/helm-glauth
+helm repo add glauth https://nnstd.github.io/helm-glauth
 ```
 
 If you had already added this repo earlier, run `helm repo update` to retrieve
