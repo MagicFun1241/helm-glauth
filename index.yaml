@@ -9,6 +9,6 @@ entries:
     name: glauth
     type: application
     urls:
-    - https://github.com/glauth/helm-glauth/releases/download/glauth-0.1.0/glauth-0.1.0.tgz
+    - https://github.com/nnstd/helm-glauth/releases/download/glauth-0.1.0/glauth-0.1.0.tgz
     version: 0.1.0
 generated: "2021-09-13T05:21:18.382177777Z"
