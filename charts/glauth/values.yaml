@@ -67,6 +67,7 @@ backend:
 
 database:
 
+  # Database engine: 'sqlite' or 'postgres'
   engine: sqlite
 
   # If our engine is 'sqlite' then this runs a separate pod,
@@ -76,6 +77,32 @@ database:
   # value below to false, and the pod will be terminated. Of course, it can be
   # restarted in a similar manner.
   shell: true
+
+  # PostgreSQL configuration (used when engine is 'postgres')
+  postgres:
+    # Connection string for PostgreSQL
+    # Format: "host=<host> port=<port> dbname=<dbname> user=<user> password=<password> sslmode=<sslmode>"
+    connectionString: "host=127.0.0.1 port=5432 dbname=glauth user=glauth password=glauth sslmode=disable"
+    
+    # Plugin configuration
+    plugin: "bin/postgres-linux-amd64.so"
+    pluginHandler: "NewPostgresHandler"
+    
+    # Base DN for LDAP structure
+    baseDN: "dc=glauth,dc=com"
+    
+    # Format configurations
+    nameformat: "cn"
+    groupformat: "ou"
+    
+    # SSH key attribute name (optional)
+    # sshkeyattr: "sshPublicKey"
+    
+    # Whether to create PostgreSQL CRD resources (Postgres and PostgresUser)
+    # Set to false if you're using an external PostgreSQL instance
+    # When true, the connection string will be automatically sourced from the
+    # generated secret (postgres-user) via POSTGRES_CONNECTION_STRING environment variable
+    createResources: false
 
 service:
   name: glauth

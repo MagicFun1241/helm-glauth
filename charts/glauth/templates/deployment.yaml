@@ -24,6 +24,11 @@ spec:
         - containerPort: {{ $port.internal }}
 {{- end}}
         command: ["/app/glauth", "-c", "/app/config/config.cfg"]
+        {{- if and (eq .Values.backend.type "database") (eq .Values.database.engine "postgres") .Values.database.postgres.createResources }}
+        envFrom:
+        - secretRef:
+            name: postgres-user
+        {{- end }}
         livenessProbe:
           exec:
             command:

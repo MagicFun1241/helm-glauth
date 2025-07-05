@@ -10,6 +10,11 @@ data:
   config.cfg: |-
 {{ .Files.Get "config/sample-simple.cfg" | indent 4 }}
 {{- else if eq .Values.backend.type "database" }}
+  {{- if eq .Values.database.engine "postgres" }}
+  config.cfg: |-
+{{ tpl (.Files.Get "config/sample-postgres.cfg") . | indent 4 }}
+  {{- else }}
   config.cfg: |-
 {{ .Files.Get "config/sample-database.cfg" | indent 4 }}
+  {{- end }}
 {{- end}}

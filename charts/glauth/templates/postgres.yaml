@@ -1,0 +1,32 @@
+{{- if eq .Values.backend.type "database" }}
+{{- if eq .Values.database.engine "postgres" }}
+{{- if .Values.database.postgres.createResources }}
+---
+apiVersion: db.movetokube.com/v1alpha1
+kind: Postgres
+metadata:
+  name: {{ include "glauth.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "glauth.labels" . | nindent 4 }}
+spec:
+  database: {{ include "glauth.fullname" . }}
+  dropOnDelete: false
+---
+apiVersion: db.movetokube.com/v1alpha1
+kind: PostgresUser
+metadata:
+  name: {{ include "glauth.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "glauth.labels" . | nindent 4 }}
+spec:
+  database: {{ include "glauth.fullname" . }}
+  privileges: "OWNER"
+  role: {{ include "glauth.fullname" . }}
+  secretName: "postgres-user"
+  secretTemplate:
+    POSTGRES_CONNECTION_STRING: "host={{.Host}} user={{.Role}} password={{.Password}} dbname={{.Database}}"
+{{- end }}
+{{- end }}
+{{- end }}

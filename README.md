@@ -78,6 +78,8 @@ When you are ready to run in production, you should create your own configuratio
 
 ### database
 
+#### SQLite
+
 If using a SQLite database, setting `shell` to "true" means that a companion pod will be running. Using this pod you will be able to update the content of the database.
 
 For instance, as described in the plugins' readme file, this is how you can add users, groups, etc. to your database.
@@ -92,6 +94,69 @@ kubectl exec -it gauth-sqlite-client -- sqlite3 gl.db
 # "update" our cluster to get rid of the pod
 helm update -f values.yaml my-glauth glauth/glauth
 ```
+
+#### PostgreSQL
+
+To use PostgreSQL as the backend, configure your `values.yaml` as follows:
+
+```yaml
+backend:
+  type: database
+
+database:
+  engine: postgres
+  postgres:
+    # Connection string for your PostgreSQL instance
+    connectionString: "host=my-postgres-host port=5432 dbname=glauth user=glauth password=secretpassword sslmode=require"
+    
+    # Plugin configuration (usually defaults are fine)
+    plugin: "bin/postgres-linux-amd64.so"
+    pluginHandler: "NewPostgresHandler"
+    
+    # LDAP structure configuration
+    baseDN: "dc=glauth,dc=com"
+    nameformat: "cn"
+    groupformat: "ou"
+    
+    # Optional: SSH key attribute name
+    # sshkeyattr: "sshPublicKey"
+    
+    # Set to true if you want to create PostgreSQL CRD resources
+    # (requires db.movetokube.com/v1alpha1 CRDs installed)
+    createResources: false
+```
+
+**Connection String Format:**
+- `host`: PostgreSQL server hostname or IP
+- `port`: PostgreSQL server port (default: 5432)
+- `dbname`: Database name
+- `user`: Database username
+- `password`: Database password
+- `sslmode`: SSL mode (disable, require, verify-ca, verify-full)
+
+**PostgreSQL Setup:**
+Before using PostgreSQL with GLAuth, ensure your database is properly configured:
+
+```sql
+-- Create database
+CREATE DATABASE glauth;
+
+-- Create user with password
+CREATE USER glauth WITH PASSWORD 'your-secure-password';
+
+-- Grant privileges
+GRANT ALL PRIVILEGES ON DATABASE glauth TO glauth;
+```
+
+**CRD Resources (Optional):**
+If you have the `db.movetokube.com/v1alpha1` CRDs installed in your cluster, you can set `createResources: true` to automatically create `Postgres` and `PostgresUser` resources. This is useful for GitOps workflows where database provisioning is handled by operators.
+
+When `createResources: true` is set:
+- The PostgreSQL connection string will be automatically sourced from the generated secret (`postgres-user`)
+- The secret contains a `POSTGRES_CONNECTION_STRING` environment variable with the full connection details
+- The `connectionString` value in `values.yaml` will be ignored in favor of the secret-based configuration
+
+For more details on PostgreSQL configuration, see the [official GLAuth PostgreSQL plugin documentation](https://raw.githubusercontent.com/glauth/glauth-postgres/refs/heads/main/sample-psql.cfg).
 
 ### service type
 
