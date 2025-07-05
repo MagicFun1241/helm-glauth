@@ -33,6 +33,10 @@ config:
 
   storage:
     size: 20G
+    #
+    # Or you could make sure that a different storageClass
+    # is picked upon instantiation.
+    className:
 
   # You may wish to override the access type; for instance if you
   # are setting up a single node with hostPath, since hostPath
@@ -40,10 +44,7 @@ config:
   # Note: When using PostgreSQL as the database engine, ReadWriteOnce
   # is automatically used. You can override this by setting:
   access:
-  #
-  # Or you could make sure that a different storageClass
-  # is picked upon instantiation.
-  class:
+  
   #
   # Alternatively, you could use an existing claim.
   existingClaim: false
@@ -53,7 +54,6 @@ config:
 # --------------------------------------------------------------------------------
 
 backend:
-
   # Possible values: 'config' or 'database'
   type: database
 

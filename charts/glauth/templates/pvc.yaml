@@ -15,8 +15,8 @@ spec:
 {{- else }}
     - "{{ .Values.config.storage.access }}"
 {{- end }}
-{{- if .Values.config.storage.class }}
-  storageClassName: "{{ .Values.config.storage.class }}"
+{{- if .Values.config.storage.className }}
+  storageClassName: "{{ .Values.config.storage.className }}"
 {{- end }}
 {{- if not .Values.config.storage.mode }}
   volumeMode: Filesystem

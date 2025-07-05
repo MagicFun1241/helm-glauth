@@ -1,188 +1,353 @@
-## What is this
+# GLAuth Helm Chart
 
-Using this helm chart, you will be able to run GLAuth with your backend(s) of choice, either as an internal piece of cluster infrastructure  (e.g. mated to Keycloak in an OIDC environment), or exposed outside your cluster as a high availability authentication server.
+GLAuth is a lightweight LDAP server for development, home use, or CI. This Helm chart allows you to deploy GLAuth in a Kubernetes cluster with your backend of choice, either as internal cluster infrastructure (e.g., mated to Keycloak in an OIDC environment) or exposed outside your cluster as a high availability authentication server.
 
-## Usage
+## TL;DR
 
-[Helm](https://helm.sh) must be installed to use the charts.  Please refer to
-Helm's [documentation](https://helm.sh/docs) to get started.
-
-Once Helm has been set up correctly, add the repo as follows:
-
-```
+```bash
 helm repo add glauth https://nnstd.github.io/helm-glauth
+helm install my-glauth glauth/glauth
 ```
 
-If you had already added this repo earlier, run `helm repo update` to retrieve
-the latest versions of the packages.  You can then run `helm search repo
-glauth` to see the charts.
+## Introduction
 
-To install the glauth chart:
+This chart bootstraps a GLAuth deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
-    helm install my-glauth glauth/glauth
+## Prerequisites
 
-To uninstall the chart:
+- Kubernetes 1.19+
+- Helm 3.2.0+
+- PV provisioner support in the underlying infrastructure (if persistence is enabled)
 
-    helm delete my-glauth
+## Installing the Chart
 
-## Configuration
+To install the chart with the release name `my-glauth`:
+
+```bash
+helm install my-glauth glauth/glauth
+```
+
+The command deploys GLAuth on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
+
+> **Tip**: List all releases using `helm list`
+
+## Uninstalling the Chart
+
+To uninstall/delete the `my-glauth` deployment:
+
+```bash
+helm delete my-glauth
+```
+
+The command removes all the Kubernetes components associated with the chart and deletes the release.
+
+## Parameters
+
+### Global parameters
+
+| Name                      | Description                                     | Value |
+| ------------------------- | ----------------------------------------------- | ----- |
+| `global.imageRegistry`    | Global Docker image registry                    | `""`  |
+| `global.imagePullSecrets` | Global Docker registry secret names as an array | `[]`  |
+| `global.storageClass`     | Global StorageClass for Persistent Volume(s)   | `""`  |
+
+### Common parameters
+
+| Name                     | Description                                        | Value           |
+| ------------------------ | -------------------------------------------------- | --------------- |
+| `kubeVersion`            | Override Kubernetes version                        | `""`            |
+| `nameOverride`           | String to partially override common.names.name    | `""`            |
+| `fullnameOverride`       | String to fully override common.names.fullname    | `""`            |
+| `namespaceOverride`      | String to fully override common.names.namespace   | `""`            |
+| `commonLabels`           | Labels to add to all deployed objects             | `{}`            |
+| `commonAnnotations`      | Annotations to add to all deployed objects        | `{}`            |
+| `clusterDomain`          | Kubernetes cluster domain name                     | `cluster.local` |
+| `extraDeploy`            | Array of extra objects to deploy with the release | `[]`            |
+
+### GLAuth Image parameters
+
+| Name                | Description                                          | Value                     |
+| ------------------- | ---------------------------------------------------- | ------------------------- |
+| `image.registry`    | GLAuth image registry                                | `docker.io`               |
+| `image.repository`  | GLAuth image repository                              | `glauth/glauth-plugins`   |
+| `image.tag`         | GLAuth image tag (immutable tags are recommended)   | `v2.4.0`                  |
+| `image.digest`      | GLAuth image digest in the way sha256:aa....        | `""`                      |
+| `image.pullPolicy`  | GLAuth image pull policy                             | `IfNotPresent`            |
+| `image.pullSecrets` | GLAuth image pull secrets                            | `[]`                      |
+
+### GLAuth Deployment parameters
+
+| Name                                    | Description                                                                               | Value   |
+| --------------------------------------- | ----------------------------------------------------------------------------------------- | ------- |
+| `replicaCount`                          | Number of GLAuth replicas to deploy                                                      | `1`     |
+| `containerPorts.ldap`                   | GLAuth LDAP container port                                                                | `3893`  |
+| `containerPorts.ldaps`                  | GLAuth LDAPS container port                                                               | `3894`  |
+| `containerPorts.web`                    | GLAuth web interface container port                                                       | `5555`  |
+| `livenessProbe.enabled`                 | Enable livenessProbe on GLAuth containers                                                | `true`  |
+| `livenessProbe.initialDelaySeconds`     | Initial delay seconds for livenessProbe                                                  | `10`    |
+| `livenessProbe.periodSeconds`           | Period seconds for livenessProbe                                                         | `10`    |
+| `livenessProbe.timeoutSeconds`          | Timeout seconds for livenessProbe                                                        | `5`     |
+| `livenessProbe.failureThreshold`        | Failure threshold for livenessProbe                                                      | `3`     |
+| `livenessProbe.successThreshold`        | Success threshold for livenessProbe                                                      | `1`     |
+| `readinessProbe.enabled`                | Enable readinessProbe on GLAuth containers                                               | `true`  |
+| `readinessProbe.initialDelaySeconds`    | Initial delay seconds for readinessProbe                                                 | `5`     |
+| `readinessProbe.periodSeconds`          | Period seconds for readinessProbe                                                        | `10`    |
+| `readinessProbe.timeoutSeconds`         | Timeout seconds for readinessProbe                                                       | `5`     |
+| `readinessProbe.failureThreshold`       | Failure threshold for readinessProbe                                                     | `3`     |
+| `readinessProbe.successThreshold`       | Success threshold for readinessProbe                                                     | `1`     |
+| `startupProbe.enabled`                  | Enable startupProbe on GLAuth containers                                                 | `false` |
+| `startupProbe.initialDelaySeconds`      | Initial delay seconds for startupProbe                                                   | `10`    |
+| `startupProbe.periodSeconds`            | Period seconds for startupProbe                                                          | `10`    |
+| `startupProbe.timeoutSeconds`           | Timeout seconds for startupProbe                                                         | `5`     |
+| `startupProbe.failureThreshold`         | Failure threshold for startupProbe                                                       | `3`     |
+| `startupProbe.successThreshold`         | Success threshold for startupProbe                                                       | `1`     |
+| `customLivenessProbe`                   | Custom livenessProbe that overrides the default one                                      | `{}`    |
+| `customReadinessProbe`                  | Custom readinessProbe that overrides the default one                                     | `{}`    |
+| `customStartupProbe`                    | Custom startupProbe that overrides the default one                                       | `{}`    |
+| `resources.limits`                      | The resources limits for the GLAuth containers                                           | `{}`    |
+| `resources.requests`                    | The requested resources for the GLAuth containers                                        | `{}`    |
+| `podSecurityContext.enabled`            | Enabled GLAuth pods' Security Context                                                    | `true`  |
+| `podSecurityContext.fsGroup`            | Set GLAuth pod's Security Context fsGroup                                                | `1001`  |
+| `containerSecurityContext.enabled`      | Enabled GLAuth containers' Security Context                                              | `true`  |
+| `containerSecurityContext.runAsUser`    | Set GLAuth containers' Security Context runAsUser                                        | `1001`  |
+| `containerSecurityContext.runAsNonRoot` | Set GLAuth containers' Security Context runAsNonRoot                                     | `true`  |
+| `existingConfigmap`                     | The name of an existing ConfigMap with your custom configuration for GLAuth              | `""`    |
+| `command`                               | Override default container command (useful when using custom images)                     | `[]`    |
+| `args`                                  | Override default container args (useful when using custom images)                        | `[]`    |
+| `hostAliases`                           | GLAuth pods host aliases                                                                  | `[]`    |
+| `podLabels`                             | Extra labels for GLAuth pods                                                             | `{}`    |
+| `podAnnotations`                        | Annotations for GLAuth pods                                                              | `{}`    |
+| `podAffinityPreset`                     | Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`     | `""`    |
+| `podAntiAffinityPreset`                 | Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`| `soft`  |
+| `pdb.create`                            | Enable/disable a Pod Disruption Budget creation                                          | `false` |
+| `pdb.minAvailable`                      | Minimum number/percentage of pods that should remain scheduled                           | `1`     |
+| `pdb.maxUnavailable`                    | Maximum number/percentage of pods that may be made unavailable                          | `""`    |
+| `autoscaling.enabled`                   | Enable Horizontal POD autoscaling for GLAuth                                             | `false` |
+| `autoscaling.minReplicas`               | Minimum number of GLAuth replicas                                                        | `1`     |
+| `autoscaling.maxReplicas`               | Maximum number of GLAuth replicas                                                        | `100`   |
+| `autoscaling.targetCPU`                 | Target CPU utilization percentage                                                        | `80`    |
+| `autoscaling.targetMemory`              | Target Memory utilization percentage                                                     | `""`    |
+| `nodeSelector`                          | Node labels for GLAuth pods assignment                                                   | `{}`    |
+| `tolerations`                           | Tolerations for GLAuth pods assignment                                                   | `[]`    |
+| `updateStrategy.type`                   | GLAuth statefulset strategy type                                                         | `RollingUpdate` |
+| `priorityClassName`                     | GLAuth pods' priorityClassName                                                           | `""`    |
+| `topologySpreadConstraints`             | Topology Spread Constraints for pod assignment spread across your cluster among failure-domains | `[]` |
+| `schedulerName`                         | Name of the k8s scheduler (other than default) for GLAuth pods                          | `""`    |
+| `terminationGracePeriodSeconds`         | Seconds Redmine pod needs to terminate gracefully                                        | `""`    |
+| `lifecycleHooks`                        | for the GLAuth container(s) to automate configuration before or after startup           | `{}`    |
+| `extraEnvVars`                          | Array with extra environment variables to add to GLAuth nodes                           | `[]`    |
+| `extraEnvVarsCM`                        | Name of existing ConfigMap containing extra env vars for GLAuth nodes                   | `""`    |
+| `extraEnvVarsSecret`                    | Name of existing Secret containing extra env vars for GLAuth nodes                      | `""`    |
+| `extraVolumes`                          | Optionally specify extra list of additional volumes for the GLAuth pod(s)               | `[]`    |
+| `extraVolumeMounts`                     | Optionally specify extra list of additional volumeMounts for the GLAuth container(s)    | `[]`    |
+| `sidecars`                              | Add additional sidecar containers to the GLAuth pod(s)                                  | `[]`    |
+| `initContainers`                        | Add additional init containers to the GLAuth pod(s)                                     | `[]`    |
+
+### GLAuth Configuration parameters
+
+| Name                           | Description                                                                      | Value        |
+| ------------------------------ | -------------------------------------------------------------------------------- | ------------ |
+| `backend.type`                 | Backend type for GLAuth (config or database)                                    | `database`   |
+| `backend.file`                 | Custom configuration file name (stored in ConfigMap)                            | `""`         |
+| `config.storage.size`          | Size of the persistent volume for GLAuth data                                   | `20Gi`       |
+| `config.storage.className`     | Storage class name for the persistent volume                                    | `""`         |
+| `config.storage.access`        | Access mode for the persistent volume                                           | `""`         |
+| `config.existingClaim`         | Use an existing PVC for GLAuth data                                             | `false`      |
+
+### Database Configuration parameters
+
+| Name                                     | Description                                                                      | Value                    |
+| ---------------------------------------- | -------------------------------------------------------------------------------- | ------------------------ |
+| `database.engine`                        | Database engine (sqlite or postgres)                                            | `sqlite`                 |
+| `database.shell`                         | Enable SQLite shell pod for database management                                 | `false`                  |
+| `database.postgres.connectionString`    | PostgreSQL connection string                                                     | `""`                     |
+| `database.postgres.plugin`              | PostgreSQL plugin path                                                           | `""`                     |
+| `database.postgres.pluginHandler`       | PostgreSQL plugin handler                                                        | `""`                     |
+| `database.postgres.baseDN`              | Base DN for LDAP structure                                                       | `dc=glauth,dc=com`       |
+| `database.postgres.nameformat`          | Name format for LDAP entries                                                     | `cn`                     |
+| `database.postgres.groupformat`         | Group format for LDAP entries                                                    | `ou`                     |
+| `database.postgres.sshkeyattr`          | SSH key attribute name (optional)                                                | `""`                     |
+| `database.postgres.createResources`     | Create PostgreSQL CRD resources                                                  | `false`                  |
+| `database.postgres.secretName`          | Secret name for PostgreSQL credentials                                           | `postgres-user`          |
+| `database.postgres.existingSecretName`  | Existing secret name created by PostgreSQL operator                             | `""`                     |
+
+### Traffic Exposure Parameters
+
+| Name                               | Description                                                                      | Value                    |
+| ---------------------------------- | -------------------------------------------------------------------------------- | ------------------------ |
+| `service.type`                     | GLAuth service type                                                              | `NodePort`               |
+| `service.name`                     | GLAuth service name                                                              | `glauth`                 |
+| `service.ports`                    | GLAuth service ports configuration                                               | `See values.yaml`        |
+| `service.nodePorts.ldap`           | Node port for LDAP                                                              | `30389`                  |
+| `service.nodePorts.ldaps`          | Node port for LDAPS                                                             | `30636`                  |
+| `service.nodePorts.web`            | Node port for web interface                                                     | `30555`                  |
+| `service.clusterIP`                | GLAuth service Cluster IP                                                       | `""`                     |
+| `service.loadBalancerIP`           | GLAuth service Load Balancer IP                                                 | `""`                     |
+| `service.loadBalancerSourceRanges` | GLAuth service Load Balancer sources                                            | `[]`                     |
+| `service.externalTrafficPolicy`    | GLAuth service external traffic policy                                          | `Cluster`                |
+| `service.annotations`              | Additional custom annotations for GLAuth service                                | `{}`                     |
+| `service.extraPorts`               | Extra ports to expose in GLAuth service                                         | `[]`                     |
+| `service.sessionAffinity`          | Control where web requests go, to the same pod or round-robin                   | `None`                   |
+| `service.sessionAffinityConfig`    | Additional settings for the sessionAffinity                                     | `{}`                     |
+
+### Ingress Parameters
+
+| Name                  | Description                                               | Value                    |
+| --------------------- | --------------------------------------------------------- | ------------------------ |
+| `ingress.enabled`     | Enable ingress record generation for GLAuth              | `false`                  |
+| `ingress.className`   | IngressClass that will be used to implement the Ingress  | `""`                     |
+| `ingress.annotations` | Additional annotations for the Ingress resource          | `{}`                     |
+| `ingress.hosts`       | An array with hosts and paths                            | `See values.yaml`        |
+| `ingress.tls`         | TLS configuration for the Ingress                        | `[]`                     |
+
+### RBAC Parameters
+
+| Name                    | Description                                           | Value   |
+| ----------------------- | ----------------------------------------------------- | ------- |
+| `rbac.create`           | Specifies whether RBAC resources should be created   | `true`  |
+| `rbac.rules`            | Custom RBAC rules to set                             | `[]`    |
+
+### Service Account Parameters
+
+| Name                                 | Description                                                            | Value    |
+| ------------------------------------ | ---------------------------------------------------------------------- | -------- |
+| `serviceAccount.create`              | Specifies whether a ServiceAccount should be created                  | `true`   |
+| `serviceAccount.name`                | The name of the ServiceAccount to use                                 | `""`     |
+| `serviceAccount.annotations`         | Additional Service Account annotations                                 | `{}`     |
+| `serviceAccount.automountServiceAccountToken` | Automount service account token for the server service account | `false`  |
+
+### Other Parameters
+
+| Name                       | Description                                                      | Value   |
+| -------------------------- | ---------------------------------------------------------------- | ------- |
+| `networkPolicy.enabled`    | Specifies whether a NetworkPolicy should be created             | `false` |
+| `networkPolicy.allowExternal` | Don't require server label for connections                   | `true`  |
+| `networkPolicy.extraIngress` | Add extra ingress rules to the NetworkPolicy                 | `[]`    |
+| `networkPolicy.extraEgress`  | Add extra egress rules to the NetworkPolicy                  | `[]`    |
+
+## Configuration and Installation Details
 
 ### Configuration Philosophy
 
-The current configuration philosophy is to remain fully compatible with the config files already supported by GLAuth.
+The current configuration philosophy is to remain fully compatible with the config files already supported by GLAuth. In the future, GLAuth may be adapted to read Kubernetes secrets, etc. However, this would grow the project's code base quite significantly.
 
-In the future, GLAuth may be adapted to read Kubernetes secrets, etc. However, this would grow the project's code base quite significantly and I am thus focusing on creating an operator instead (should there be a demand!) -- this operator would reconcile the creation/deletion of secrets for user management purpose.
+### Backend Types
 
-### values.yaml
+GLAuth supports two main backend types:
 
-While it is perfectly feasible to install GLAuth quickly using the `install` command listed earlier, I would recommend retrieving a local copy of `values.yaml` and modifying it to fit your needs:
+1. **Config Backend**: Uses a simple configuration file with embedded users and groups
+2. **Database Backend**: Uses SQLite or PostgreSQL for storing user and group data
 
-```
-curl https://raw.githubusercontent.com/glauth/helm-glauth/main/charts/glauth/values.yaml
-# edit to your heart's content; save
-helm install -f values.yaml my-glauth glauth/glauth
-```
-
-As with the natively installed GLAuth instances, you can:
-
-- use a local config file
-- connect with OwnCloud
-- query a database backend
-- proxy queries to an LDAP server.
-
-### replicas
-
-You can run 1 (default) or more replicas. Since GLAuth is mostly reading data, there are no race conditions.
-
-### repository
-
-If you specify "glauth/glauh" you will be pulling the lighter version of GLAuth, which does not support databases.
-
-If you specify "glauth/glauth-plugins" you will be getting the kitchen sink.
-
-You can even specify your own container if you created a personalized version of GLAuth.
-
-Right now, the recommended `tag` is "nightly" which is built from the `dev` branch.
-
-### storage
-
-This section lets you specify a size, access mode and other quirks of the persistent volume created by GLAuth to store its configuration data, including SQLite databases, if any, and certificates.
-
-You can also specify `existingClaim: true` to use a persistent volume that you will have created yourself.
-
-### backend
-
-This will determine which predefined configuration file (`sample-simple.cfg` or `sample-sqlite.cfg`) will be installed in the configuration map used by GLAuth to retrieve its configuration.
-
-When you are ready to run in production, you should create your own configuration file and use it as `file: <your file name>`
-
-### database
+### Database Configuration
 
 #### SQLite
 
-If using a SQLite database, setting `shell` to "true" means that a companion pod will be running. Using this pod you will be able to update the content of the database.
-
-For instance, as described in the plugins' readme file, this is how you can add users, groups, etc. to your database.
-
-You can get rid of this pod when not needed, as it is more exposed than GLAuth's own pod, which was created on top of a 'distroless' image to enhance security:
-
-```
-kubectl exec -it gauth-sqlite-client -- sqlite3 gl.db
-# if testing, you can copy the example SQL code from pkg/plugins/README.txt here
-# then, exit the pod
-# edit values.yaml to set 'shell: false'
-# "update" our cluster to get rid of the pod
-helm update -f values.yaml my-glauth glauth/glauth
-```
-
-#### PostgreSQL
-
-To use PostgreSQL as the backend, configure your `values.yaml` as follows:
+When using SQLite as the backend:
 
 ```yaml
 backend:
   type: database
+database:
+  engine: sqlite
+  shell: true  # Enable shell pod for database management
+```
 
+Setting `shell: true` creates a companion pod that allows you to manage the SQLite database:
+
+```bash
+kubectl exec -it glauth-sqlite-client -- sqlite3 gl.db
+```
+
+#### PostgreSQL
+
+For PostgreSQL backend:
+
+```yaml
+backend:
+  type: database
 database:
   engine: postgres
   postgres:
-    # Connection string for your PostgreSQL instance
     connectionString: "host=my-postgres-host port=5432 dbname=glauth user=glauth password=secretpassword sslmode=require"
-    
-    # Plugin configuration (usually defaults are fine)
-    plugin: "bin/postgres-linux-amd64.so"
-    pluginHandler: "NewPostgresHandler"
-    
-    # LDAP structure configuration
     baseDN: "dc=glauth,dc=com"
     nameformat: "cn"
     groupformat: "ou"
-    
-    # Optional: SSH key attribute name
-    # sshkeyattr: "sshPublicKey"
-    
-    # Set to true if you want to create PostgreSQL CRD resources
-    # (requires db.movetokube.com/v1alpha1 CRDs installed)
-    createResources: false
 ```
 
-**Connection String Format:**
-- `host`: PostgreSQL server hostname or IP
-- `port`: PostgreSQL server port (default: 5432)
-- `dbname`: Database name
-- `user`: Database username
-- `password`: Database password
-- `sslmode`: SSL mode (disable, require, verify-ca, verify-full)
+### Service Configuration
 
-**PostgreSQL Setup:**
-Before using PostgreSQL with GLAuth, ensure your database is properly configured:
+GLAuth exposes three main ports:
+- **3893**: LDAP (unencrypted)
+- **3894**: LDAPS (encrypted)
+- **5555**: Web interface
 
-```sql
--- Create database
-CREATE DATABASE glauth;
+You can configure the service type (ClusterIP, NodePort, LoadBalancer) based on your needs.
 
--- Create user with password
-CREATE USER glauth WITH PASSWORD 'your-secure-password';
+### Persistence
 
--- Grant privileges
-GRANT ALL PRIVILEGES ON DATABASE glauth TO glauth;
+GLAuth uses persistent volumes to store:
+- Configuration files
+- SQLite databases (when using SQLite backend)
+- SSL certificates for LDAPS
+
+Configure persistence using the `config.storage` section.
+
+### Security
+
+For production deployments, consider:
+- Using LDAPS (port 3894) instead of plain LDAP
+- Configuring proper network policies
+- Using secrets for database credentials
+- Disabling the SQLite shell pod when not needed
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Pod not starting**: Check resource limits and node capacity
+2. **Database connection issues**: Verify connection string and network policies
+3. **LDAP authentication failures**: Check user configuration and base DN settings
+4. **Persistence issues**: Verify storage class and PVC creation
+
+### Debug Commands
+
+```bash
+# Check pod status
+kubectl get pods -l app.kubernetes.io/name=glauth
+
+# View logs
+kubectl logs -l app.kubernetes.io/name=glauth
+
+# Check service endpoints
+kubectl get svc glauth
+
+# Test LDAP connectivity
+kubectl exec -it deploy/glauth -- ldapsearch -x -H ldap://localhost:3893 -b "dc=glauth,dc=com"
 ```
 
-**CRD Resources (Optional):**
-If you have the `db.movetokube.com/v1alpha1` CRDs installed in your cluster, you can set `createResources: true` to automatically create `Postgres` and `PostgresUser` resources. This is useful for GitOps workflows where database provisioning is handled by operators.
+## Upgrading
 
-When `createResources: true` is set:
-- The PostgreSQL connection string will be automatically sourced from the generated secret (`postgres-user`)
-- The secret contains a `POSTGRES_CONNECTION_STRING` environment variable with the full connection details
-- The `connectionString` value in `values.yaml` will be ignored in favor of the secret-based configuration
+### To 0.3.0
 
-For more details on PostgreSQL configuration, see the [official GLAuth PostgreSQL plugin documentation](https://raw.githubusercontent.com/glauth/glauth-postgres/refs/heads/main/sample-psql.cfg).
+This version introduces PostgreSQL support and enhanced configuration options. When upgrading:
 
-### service type
+1. Review the new PostgreSQL configuration options
+2. Update your `values.yaml` if using custom configurations
+3. Consider enabling persistence if not already configured
 
-This is standard Kubernetes-type services. You can specify "ClusterIP" / "LoadBalancer" / etc.
+## Contributing
 
-If you specify "NodePort" you will need to include a `node` value in order to consistently expose the same port to the rest of the world.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-### ingress
+## License
 
-This is very much untested. It should work with Nginx, Haproxy, and more, as these can forward both HTTP and TCP connections.
+This Helm chart is licensed under the Apache 2.0 license.
 
-### On the topic of cert and key files
+## Support
 
-Any files you need persisted, you can push to your persistent volume, and point the configuration file to them.
-
-Such configuration would likely look like:
-
-```
-[ldaps]
-enabled = true
-listen = "0.0.0.0:3894"
-cert = "/app/config/glauth.crt"
-key = "/app/config/glauth.key"
-```
-
-Keep in mind that you can edit this volume's content using the companion pod.
+For support and questions:
+- [GLAuth GitHub Repository](https://github.com/glauth/glauth)
+- [Helm Chart Repository](https://github.com/nnstd/helm-glauth)
 
 
 
