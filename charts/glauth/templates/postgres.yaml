@@ -26,6 +26,10 @@ spec:
   role: {{ include "glauth.fullname" . }}
   secretName: "{{ .Values.database.postgres.secretName | default "postgres-user" }}"
   secretTemplate:
+    PGHOST: "{{.Host}}"
+    PGUSER: "{{.Role}}"
+    PGPASSWORD: "{{.Password}}"
+    PGDATABASE: "{{.Database}}"
     POSTGRES_CONNECTION_STRING: "host={{.Host}} user={{.Role}} password={{.Password}} dbname={{.Database}}"
 {{- end }}
 {{- end }}
