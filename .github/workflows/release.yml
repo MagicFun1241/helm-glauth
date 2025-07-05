@@ -2,7 +2,8 @@ name: Release Charts
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -27,6 +28,17 @@ jobs:
         uses: azure/setup-helm@v3
         with:
           version: v3.10.0
+
+      - name: Check if gh-pages branch exists
+        run: |
+          if ! git ls-remote --heads origin gh-pages | grep -q gh-pages; then
+            echo "Creating gh-pages branch..."
+            git checkout --orphan gh-pages
+            git rm -rf .
+            git commit --allow-empty -m "Initial gh-pages branch"
+            git push origin gh-pages
+            git checkout main
+          fi
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.5.0
