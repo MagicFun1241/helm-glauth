@@ -1,5 +1,9 @@
 name: Release Charts
 
+on:
+  push:
+    branches: [ "main" ]
+
 permissions:
   contents: write
   pages: write
