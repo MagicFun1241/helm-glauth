@@ -6,14 +6,14 @@ metadata:
   name: {{ .Chart.Name }}-data
 spec:
   accessModes:
-{{- if not .Values.config.storage.access }}
+{{- if not .Values.config.storage.accessMode }}
 {{- if and (eq .Values.backend.type "database") (eq .Values.database.engine "postgres") }}
     - ReadWriteOnce
 {{- else }}
     - ReadWriteMany
 {{- end }}
 {{- else }}
-    - "{{ .Values.config.storage.access }}"
+    - "{{ .Values.config.storage.accessMode }}"
 {{- end }}
 {{- if .Values.config.storage.className }}
   storageClassName: "{{ .Values.config.storage.className }}"

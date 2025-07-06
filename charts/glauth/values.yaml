@@ -38,12 +38,12 @@ config:
     # is picked upon instantiation.
     className:
 
-  # You may wish to override the access type; for instance if you
-  # are setting up a single node with hostPath, since hostPath
-  # does not support multiple access but we are requesting that.
-  # Note: When using PostgreSQL as the database engine, ReadWriteOnce
-  # is automatically used. You can override this by setting:
-  access:
+    # You may wish to override the accessMode type; for instance if you
+    # are setting up a single node with hostPath, since hostPath
+    # does not support multiple accessMode but we are requesting that.
+    # Note: When using PostgreSQL as the database engine, ReadWriteOnce
+    # is automatically used. You can override this by setting:
+    accessMode:
   
   #
   # Alternatively, you could use an existing claim.

@@ -151,7 +151,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | `backend.file`                 | Custom configuration file name (stored in ConfigMap)                            | `""`         |
 | `config.storage.size`          | Size of the persistent volume for GLAuth data                                   | `20Gi`       |
 | `config.storage.className`     | Storage class name for the persistent volume                                    | `""`         |
-| `config.storage.access`        | Access mode for the persistent volume                                           | `""`         |
+| `config.storage.accessMode`        | Access mode for the persistent volume                                           | `""`         |
 | `config.existingClaim`         | Use an existing PVC for GLAuth data                                             | `false`      |
 
 ### Database Configuration parameters
