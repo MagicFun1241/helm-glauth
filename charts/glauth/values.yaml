@@ -6,14 +6,10 @@ image:
   # Repository to pull from the registry.
   # --------------------------------------------------------------------------------
 
-  # Default "config" image.
-  #repository: "glauth/glauth"
-
-  # Use alternate image for SQL plugins.
-  repository: "glauth/glauth-plugins"
+  repository: "ghcr.io/nnstd/glauth"
 
   # Production tag
-  tag: "v2.4.0"
+  tag: "v2.4.40"
 
   # Testing tag
   #tag: "nightly"
@@ -82,12 +78,6 @@ database:
     # Format: "host=<host> port=<port> dbname=<dbname> user=<user> password=<password> sslmode=<sslmode>"
     # Only required when createResources is false
     connectionString:
-    
-    # plugin (default: /app/postgres.so)
-    plugin: 
-    
-    # pluginHandler (default: NewPostgresHandler)
-    pluginHandler:
     
     # Base DN for LDAP structure
     baseDN: "dc=glauth,dc=com"
