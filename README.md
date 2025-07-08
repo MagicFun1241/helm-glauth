@@ -1,6 +1,8 @@
 # GLAuth Helm Chart
 
-GLAuth is a lightweight LDAP server for development, home use, or CI. This Helm chart allows you to deploy GLAuth in a Kubernetes cluster with your backend of choice, either as internal cluster infrastructure (e.g., mated to Keycloak in an OIDC environment) or exposed outside your cluster as a high availability authentication server.
+GLAuth is a lightweight LDAP server for development, home use, or CI. 
+
+This Helm chart allows you to deploy GLAuth in a Kubernetes cluster with your backend of choice, either as internal cluster infrastructure (e.g., mated to Keycloak in an OIDC environment) or exposed outside your cluster as a high availability authentication server.
 
 ## TL;DR
 
@@ -18,6 +20,10 @@ This chart bootstraps a GLAuth deployment on a [Kubernetes](https://kubernetes.i
 - Kubernetes 1.19+
 - Helm 3.2.0+
 - PV provisioner support in the underlying infrastructure (if persistence is enabled)
+
+## What changed?
+
+- [x] Added support of [PostgresOperator](https://github.com/movetokube/postgres-operator) for database creation and secret management.
 
 ## Installing the Chart
 
@@ -348,10 +354,3 @@ This Helm chart is licensed under the Apache 2.0 license.
 For support and questions:
 - [GLAuth GitHub Repository](https://github.com/glauth/glauth)
 - [Helm Chart Repository](https://github.com/nnstd/helm-glauth)
-
-
-
-
-
-
-

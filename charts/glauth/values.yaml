@@ -1,15 +1,13 @@
 replicaCount: 1
 
 image:
-
   # --------------------------------------------------------------------------------
   # Repository to pull from the registry.
   # --------------------------------------------------------------------------------
-
   repository: "ghcr.io/nnstd/glauth"
 
   # Production tag
-  tag: "v2.4.40"
+  tag: "v2.4.44"
 
   # Testing tag
   #tag: "nightly"
@@ -17,92 +15,156 @@ image:
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
+
 nameOverride: ""
 fullnameOverride: ""
 
 config:
+  debug: false
+
+  systemLogging: false
+  structuredLogging: false
 
   # --------------------------------------------------------------------------------
   # Will be used, if our backend is SQLite, to create a storage volume for the db
   # Also, to store cert information if using LDAPS
   # --------------------------------------------------------------------------------
-
   storage:
     size: 20G
-    #
+
     # Or you could make sure that a different storageClass
     # is picked upon instantiation.
-    className:
+    className: ""
 
     # You may wish to override the accessMode type; for instance if you
     # are setting up a single node with hostPath, since hostPath
     # does not support multiple accessMode but we are requesting that.
     # Note: When using PostgreSQL as the database engine, ReadWriteOnce
     # is automatically used. You can override this by setting:
-    accessMode:
+    accessMode: ""
   
-  #
-  # Alternatively, you could use an existing claim.
-  existingClaim: false
+    # Alternatively, you could use an existing claim.
+    existingClaim: false
 
-# --------------------------------------------------------------------------------
-# This is in addition to specifying backend type in the cfg file
-# --------------------------------------------------------------------------------
+  ldap:
+    enabled: true
 
-backend:
-  # Possible values: 'config' or 'database'
-  type: database
+    # Listen address for LDAP, default is "0.0.0.0:3893"
+    listen: ""
 
-  # If provided, this is the name of a local config file that will be
-  # stored in our configuration map.
-  # Note that when using 'config' you could simply edit `sample-simple.cfg`
-  # and not provide an alternate file; you could similarly edit `sample-database.cfg`
-  # to support a non-SQLIte database.
-  file:
+  ldaps:
+    enabled: false
 
-database:
-  # Database engine: 'sqlite' or 'postgres'
-  engine: sqlite
+    # Listen address for LDAPS, default is "0.0.0.0:3894"
+    listen: ""
 
-  # If our engine is 'sqlite' then this runs a separate pod,
-  # that we can use to provision/update our database.
-  # For security reasons, you should disable this pod when not in use.
-  # Simply run `helm upgrade` instead of `helm install` after setting the
-  # value below to false, and the pod will be terminated. Of course, it can be
-  # restarted in a similar manner.
-  shell:
+    # Path to the certificate file
+    # to enable ldaps genrerate a certificate, eg. with:
+    # openssl req -x509 -newkey rsa:4096 -keyout glauth.key -out glauth.crt -days 365 -nodes -subj '/CN=`hostname`'
+    cert: ""
+    # Path to the key file
+    key: ""
 
-  # PostgreSQL configuration (used when engine is 'postgres')
-  postgres:
-    # Connection string for PostgreSQL
-    # Format: "host=<host> port=<port> dbname=<dbname> user=<user> password=<password> sslmode=<sslmode>"
-    # Only required when createResources is false
-    connectionString:
+  api:
+    enabled: true
+
+    # Enable internal API for debugging application performance
+    internals: true
     
+    # Whether to enable TLS
+    tls: false
+    
+    # Listen address for the API, default is "0.0.0.0:5555"    
+    listen: ""
+
+    # Path to the certificate file
+    cert: ""
+    # Path to the key file
+    key: ""
+
+  behaviors:
+    # Ignore all capabilities restrictions, for instance allowing every user to perform a search
+    ignoreCapabilities: false
+
+    # Enable a "fail2ban" type backoff mechanism temporarily banning repeated failed login attempts
+    limitFailedBinds: true
+
+    # How many failed login attempts are allowed before a ban is imposed
+    numberOfFailedBinds: 3
+
+    # How long (in seconds) is the window for failed login attempts
+    periodOfFailedBinds: 10
+    
+    # How long (in seconds) is the ban duration
+    blockFailedBindsFor: 60
+    
+    # Clean learnt IP addresses every N seconds
+    pruneSourceTableEvery: 600
+    
+    # Clean learnt IP addresses not seen in N seconds
+    pruneSourcesOlderThan: 600
+
+  backend:
+    # Possible values: 'config' or 'database'
+    type: database
+
+    # If provided, this is the name of a local config file that will be
+    # stored in our configuration map.
+    # Note that when using 'config' you could simply add then in `config.users`
+    # and not provide an alternate file.
+    file: ""
+
     # Base DN for LDAP structure
     baseDN: "dc=glauth,dc=com"
     
-    # Format configurations
-    nameformat: "cn"
-    groupformat: "ou"
-    
-    # SSH key attribute name (optional)
-    # sshkeyattr: "sshPublicKey"
-    
-    # Whether to create PostgreSQL CRD resources (Postgres and PostgresUser)
-    # Set to false if you're using an external PostgreSQL instance
-    # When true, the connection string will be automatically sourced from the
-    # generated secret (postgres-user) via POSTGRES_CONNECTION_STRING environment variable
-    createResources: false
-    
-    # Secret name to create for PostgreSQL credentials (used by the PostgreSQL CRD)
-    # The actual secret created by the operator may have a different name
-    secretName: "postgres-user"
-    
-    # Actual secret name created by the PostgreSQL operator (if different from secretName)
-    # Set this to the actual secret name if the operator creates a different name
-    # Example: "postgres-user-glauth"
-    existingSecretName:
+    ## Configure dn format to use structures like 
+    ## "uid=serviceuser,cn=svcaccts,$BASEDN" instead of "cn=serviceuser,ou=svcaccts,$BASEDN"
+    ## to help ease migrations from other LDAP systems
+    nameFormat: "cn"
+    groupFormat: "ou"
+
+    # If you are using a client that requires reading the root DSE first
+    # such as SSSD. Default is false.
+    anonymousDSE: false
+
+    # SSH key attribute name, default is 'sshPublicKey'
+    # can be set to 'ipaSshPubKey' for IPA compatibility
+    sshKeyAttr: ""
+
+  database:
+    # Database engine: 'sqlite' or 'postgres'
+    engine: sqlite
+
+    sqlite:
+      # If our engine is 'sqlite' then this runs a separate pod,
+      # that we can use to provision/update our database.
+      # For security reasons, you should disable this pod when not in use.
+      # Simply run `helm upgrade` instead of `helm install` after setting the
+      # value below to false, and the pod will be terminated. Of course, it can be
+      # restarted in a similar manner.
+      shell: false
+
+    # PostgreSQL configuration (used when engine is 'postgres')
+    postgres:
+      # Connection string for PostgreSQL
+      # Format: "host=<host> port=<port> dbname=<dbname> user=<user> password=<password> sslmode=<sslmode>"
+      # Only required when createResources is false
+      connectionString: ""
+      
+      # Whether to create PostgreSQL CRD resources (Postgres and PostgresUser)
+      # Set to false if you're using an external PostgreSQL instance
+      # When true, the connection string will be automatically sourced from the
+      # generated secret (postgres-user) via POSTGRES_CONNECTION_STRING environment variable
+      createResources: false
+      
+      # Secret name to create for PostgreSQL credentials (used by the PostgreSQL CRD)
+      # The actual secret created by the operator may have a different name
+      secretName: "postgres-user"
+      
+      # Actual secret name created by the PostgreSQL operator (if different from secretName)
+      # Set this to the actual secret name if the operator creates a different name
+      # Example: "postgres-user-glauth"
+      existingSecretName:
 
 service:
   name: glauth
