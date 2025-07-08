@@ -75,6 +75,13 @@ The command removes all the Kubernetes components associated with the chart and 
 | `config.systemLogging`         | Enable system logging                                                           | `false`      |
 | `config.structuredLogging`     | Enable structured logging                                                       | `false`      |
 
+### Users and Groups Configuration
+
+| Name                           | Description                                                                      | Value        |
+| ------------------------------ | -------------------------------------------------------------------------------- | ------------ |
+| `config.users`                 | Array of users for config backend (used only when backend.type is "config")    | `[]`         |
+| `config.groups`                | Array of groups for config backend (used only when backend.type is "config")   | `[]`         |
+
 ### Storage Configuration
 
 | Name                           | Description                                                                      | Value        |
@@ -225,6 +232,52 @@ GLAuth supports two main backend types:
 
 1. **Config Backend**: Uses a simple configuration file with embedded users and groups
 2. **Database Backend**: Uses SQLite or PostgreSQL for storing user and group data
+
+#### Config Backend
+
+When using the config backend, users and groups are defined directly in the `values.yaml` file:
+
+```yaml
+config:
+  backend:
+    type: config
+  users:
+    - name: "johndoe"
+      givenname: "John"
+      sn: "Doe"
+      mail: "jdoe@example.com"
+      uidnumber: 5001
+      primarygroup: 5501
+      passsha256: "6478579e37aff45f013e14eeb30b3cc56c72ccdc310123bcdf53e0333e3f416a"
+      capabilities:
+        - action: "search"
+          object: "*"
+  groups:
+    - name: "users"
+      gidnumber: 5501
+```
+
+**User Configuration Options:**
+- `name`: Username (required)
+- `givenname`: First name
+- `sn`: Surname/last name
+- `mail`: Email address
+- `uidnumber`: Unique user ID number (required)
+- `primarygroup`: Primary group ID (required)
+- `loginShell`: User's login shell
+- `homeDir`: User's home directory
+- `passsha256`: SHA256 hashed password
+- `passappsha256`: Array of SHA256 hashed application passwords
+- `passappbcrypt`: Array of bcrypt hashed application passwords
+- `sshkeys`: Array of SSH public keys
+- `otpsecret`: OTP secret for 2FA
+- `yubikey`: YubiKey identifier
+- `capabilities`: Array of user capabilities (action and object)
+
+**Group Configuration Options:**
+- `name`: Group name (required)
+- `gidnumber`: Unique group ID number (required)
+- `includegroups`: Array of group IDs to include in this group
 
 ### Database Configuration
 
@@ -396,6 +449,37 @@ When upgrading, review the changelog and:
 4. Test in a non-production environment first
 
 ## Examples
+
+### Config Backend with Users and Groups
+
+```yaml
+config:
+  backend:
+    type: config
+  users:
+    - name: "admin"
+      givenname: "Administrator"
+      sn: "User"
+      mail: "admin@example.com"
+      uidnumber: 5001
+      primarygroup: 5501
+      passsha256: "6478579e37aff45f013e14eeb30b3cc56c72ccdc310123bcdf53e0333e3f416a"
+      capabilities:
+        - action: "search"
+          object: "*"
+    - name: "user1"
+      givenname: "Regular"
+      sn: "User"
+      mail: "user1@example.com"
+      uidnumber: 5002
+      primarygroup: 5502
+      passsha256: "6478579e37aff45f013e14eeb30b3cc56c72ccdc310123bcdf53e0333e3f416a"
+  groups:
+    - name: "admins"
+      gidnumber: 5501
+    - name: "users"
+      gidnumber: 5502
+```
 
 ### Basic SQLite Setup
 
