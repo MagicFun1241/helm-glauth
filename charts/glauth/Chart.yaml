@@ -15,10 +15,32 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.3.1
+version: 0.3.2
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 appVersion: "2.0.1"
+
+# Keywords for the chart
+keywords:
+  - ldap
+  - authentication
+  - glauth
+  - directory
+  - identity
+
+# Home page URL
+home: https://github.com/nnstd/glauth
+
+# Source code URLs
+sources:
+  - https://github.com/nnstd/glauth
+  - https://github.com/nnstd/helm-glauth
+
+# Maintainers
+maintainers:
+  - name: Nikita Ganzikov
+    email: nganzikov@gmail.com
+    url: https://github.com/magicfun1241

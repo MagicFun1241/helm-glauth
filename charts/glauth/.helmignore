@@ -21,3 +21,17 @@
 .idea/
 *.tmproj
 .vscode/
+# Test files
+*_test.go
+test/
+tests/
+*.test
+# CI/CD files
+.github/
+.gitlab-ci.yml
+.travis.yml
+Jenkinsfile
+# Documentation build artifacts
+docs/_build/
+*.pyc
+__pycache__/
