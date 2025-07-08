@@ -24,6 +24,7 @@ This chart bootstraps a GLAuth deployment on a [Kubernetes](https://kubernetes.i
 ## What changed?
 
 - [x] Added support of [PostgresOperator](https://github.com/movetokube/postgres-operator) for database creation and secret management.
+- [x] Refactored the chart to cover all the configuration options.
 
 ## Installing the Chart
 
