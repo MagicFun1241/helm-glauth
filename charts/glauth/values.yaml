@@ -26,6 +26,26 @@ config:
   structuredLogging: false
 
   # --------------------------------------------------------------------------------
+  # Users configuration - define users for the LDAP server
+  # These users will be used only when backend.type is "config"
+  # --------------------------------------------------------------------------------
+  users:
+    - name: "johndoe"
+      givenname: "John"
+      sn: "Doe"
+      mail: "jdoe@example.com"
+      uidnumber: 5001
+      primarygroup: 5501
+      passsha256: "6478579e37aff45f013e14eeb30b3cc56c72ccdc310123bcdf53e0333e3f416a" # dogood
+
+  # --------------------------------------------------------------------------------
+  # Groups configuration - define groups for the LDAP server
+  # --------------------------------------------------------------------------------
+  groups:
+    - name: "users"
+      gidnumber: 5501
+
+  # --------------------------------------------------------------------------------
   # Will be used, if our backend is SQLite, to create a storage volume for the db
   # Also, to store cert information if using LDAPS
   # --------------------------------------------------------------------------------
