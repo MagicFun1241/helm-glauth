@@ -1,0 +1,755 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "type": "object",
+  "title": "GLAuth Helm Chart Values Schema",
+  "description": "Schema for GLAuth Helm chart configuration values",
+  "properties": {
+    "replicaCount": {
+      "type": "integer",
+      "description": "Number of GLAuth replicas to deploy",
+      "default": 1,
+      "minimum": 1
+    },
+    "image": {
+      "type": "object",
+      "description": "Container image configuration",
+      "properties": {
+        "repository": {
+          "type": "string",
+          "description": "GLAuth image repository",
+          "default": "ghcr.io/nnstd/glauth"
+        },
+        "tag": {
+          "type": "string",
+          "description": "GLAuth image tag",
+          "default": "v2.4.44"
+        },
+        "pullPolicy": {
+          "type": "string",
+          "description": "Image pull policy",
+          "enum": ["Always", "Never", "IfNotPresent"],
+          "default": "IfNotPresent"
+        }
+      },
+      "required": ["repository", "tag", "pullPolicy"],
+      "additionalProperties": false
+    },
+    "imagePullSecrets": {
+      "type": "array",
+      "description": "Image pull secrets for private registries",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": ["name"],
+        "additionalProperties": false
+      },
+      "default": []
+    },
+    "nameOverride": {
+      "type": "string",
+      "description": "String to partially override glauth.fullname",
+      "default": ""
+    },
+    "fullnameOverride": {
+      "type": "string",
+      "description": "String to fully override glauth.fullname",
+      "default": ""
+    },
+    "config": {
+      "type": "object",
+      "description": "GLAuth application configuration",
+      "properties": {
+        "debug": {
+          "type": "boolean",
+          "description": "Enable debug mode",
+          "default": false
+        },
+        "systemLogging": {
+          "type": "boolean",
+          "description": "Enable system logging",
+          "default": false
+        },
+        "structuredLogging": {
+          "type": "boolean",
+          "description": "Enable structured logging",
+          "default": false
+        },
+        "users": {
+          "type": "array",
+          "description": "User definitions for config backend",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Username"
+              },
+              "givenname": {
+                "type": "string",
+                "description": "Given name (first name)"
+              },
+              "sn": {
+                "type": "string",
+                "description": "Surname (last name)"
+              },
+              "mail": {
+                "type": "string",
+                "format": "email",
+                "description": "Email address"
+              },
+              "uidnumber": {
+                "type": "integer",
+                "description": "Unix UID number",
+                "minimum": 1000
+              },
+              "primarygroup": {
+                "type": "integer",
+                "description": "Primary group GID",
+                "minimum": 1000
+              },
+              "passsha256": {
+                "type": "string",
+                "description": "SHA-256 password hash",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": ["name", "uidnumber", "primarygroup"],
+            "additionalProperties": true
+          },
+          "default": []
+        },
+        "groups": {
+          "type": "array",
+          "description": "Group definitions",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Group name"
+              },
+              "gidnumber": {
+                "type": "integer",
+                "description": "Unix GID number",
+                "minimum": 1000
+              }
+            },
+            "required": ["name", "gidnumber"],
+            "additionalProperties": true
+          },
+          "default": []
+        },
+        "storage": {
+          "type": "object",
+          "description": "Storage configuration for SQLite and certificates",
+          "properties": {
+            "size": {
+              "type": "string",
+              "description": "Storage size",
+              "pattern": "^[0-9]+[KMGT]i?$",
+              "default": "20G"
+            },
+            "className": {
+              "type": "string",
+              "description": "Storage class name",
+              "default": ""
+            },
+            "accessMode": {
+              "type": "string",
+              "description": "Storage access mode",
+              "enum": ["", "ReadWriteOnce", "ReadOnlyMany", "ReadWriteMany"],
+              "default": ""
+            },
+            "existingClaim": {
+              "type": ["boolean", "string"],
+              "description": "Use existing PVC (true/false or PVC name)",
+              "default": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "ldap": {
+          "type": "object",
+          "description": "LDAP listener configuration",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Enable LDAP listener",
+              "default": true
+            },
+            "listen": {
+              "type": "string",
+              "description": "LDAP listen address",
+              "default": ""
+            }
+          },
+          "additionalProperties": false
+        },
+        "ldaps": {
+          "type": "object",
+          "description": "LDAPS (secure LDAP) listener configuration",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Enable LDAPS listener",
+              "default": false
+            },
+            "listen": {
+              "type": "string",
+              "description": "LDAPS listen address",
+              "default": ""
+            },
+            "cert": {
+              "type": "string",
+              "description": "Path to certificate file",
+              "default": ""
+            },
+            "key": {
+              "type": "string",
+              "description": "Path to private key file",
+              "default": ""
+            }
+          },
+          "additionalProperties": false
+        },
+        "api": {
+          "type": "object",
+          "description": "API configuration",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Enable API endpoint",
+              "default": true
+            },
+            "internals": {
+              "type": "boolean",
+              "description": "Enable internal API for debugging",
+              "default": true
+            },
+            "tls": {
+              "type": "boolean",
+              "description": "Enable TLS for API",
+              "default": false
+            },
+            "listen": {
+              "type": "string",
+              "description": "API listen address",
+              "default": ""
+            },
+            "cert": {
+              "type": "string",
+              "description": "Path to certificate file",
+              "default": ""
+            },
+            "key": {
+              "type": "string",
+              "description": "Path to private key file",
+              "default": ""
+            }
+          },
+          "additionalProperties": false
+        },
+        "behaviors": {
+          "type": "object",
+          "description": "GLAuth behavior configuration",
+          "properties": {
+            "ignoreCapabilities": {
+              "type": "boolean",
+              "description": "Ignore all capabilities restrictions",
+              "default": false
+            },
+            "limitFailedBinds": {
+              "type": "boolean",
+              "description": "Enable failed bind limiting",
+              "default": true
+            },
+            "numberOfFailedBinds": {
+              "type": "integer",
+              "description": "Number of failed binds before ban",
+              "minimum": 1,
+              "default": 3
+            },
+            "periodOfFailedBinds": {
+              "type": "integer",
+              "description": "Time window for failed bind counting (seconds)",
+              "minimum": 1,
+              "default": 10
+            },
+            "blockFailedBindsFor": {
+              "type": "integer",
+              "description": "Ban duration for failed binds (seconds)",
+              "minimum": 1,
+              "default": 60
+            },
+            "pruneSourceTableEvery": {
+              "type": "integer",
+              "description": "Cleanup interval for IP table (seconds)",
+              "minimum": 1,
+              "default": 600
+            },
+            "pruneSourcesOlderThan": {
+              "type": "integer",
+              "description": "Age threshold for IP cleanup (seconds)",
+              "minimum": 1,
+              "default": 600
+            }
+          },
+          "additionalProperties": false
+        },
+        "backend": {
+          "type": "object",
+          "description": "Backend configuration",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "Backend type",
+              "enum": ["config", "database"],
+              "default": "database"
+            },
+            "file": {
+              "type": "string",
+              "description": "Config file name for config backend",
+              "default": ""
+            },
+            "baseDN": {
+              "type": "string",
+              "description": "Base DN for LDAP structure",
+              "pattern": "^(dc=[^,]+)(,dc=[^,]+)*$",
+              "default": "dc=glauth,dc=com"
+            },
+            "nameFormat": {
+              "type": "string",
+              "description": "DN name format",
+              "enum": ["cn", "uid"],
+              "default": "cn"
+            },
+            "groupFormat": {
+              "type": "string",
+              "description": "DN group format",
+              "enum": ["ou", "cn"],
+              "default": "ou"
+            },
+            "anonymousDSE": {
+              "type": "boolean",
+              "description": "Allow anonymous DSE reads (required for SSSD)",
+              "default": false
+            },
+            "sshKeyAttr": {
+              "type": "string",
+              "description": "SSH key attribute name",
+              "default": ""
+            }
+          },
+          "required": ["type"],
+          "additionalProperties": false
+        },
+        "database": {
+          "type": "object",
+          "description": "Database configuration",
+          "properties": {
+            "engine": {
+              "type": "string",
+              "description": "Database engine",
+              "enum": ["sqlite", "postgres"],
+              "default": "sqlite"
+            },
+            "sqlite": {
+              "type": "object",
+              "description": "SQLite specific configuration",
+              "properties": {
+                "shell": {
+                  "type": "boolean",
+                  "description": "Enable SQLite shell pod for management",
+                  "default": false
+                }
+              },
+              "additionalProperties": false
+            },
+            "postgres": {
+              "type": "object",
+              "description": "PostgreSQL specific configuration",
+              "properties": {
+                "connectionString": {
+                  "type": "string",
+                  "description": "PostgreSQL connection string",
+                  "default": ""
+                },
+                "createResources": {
+                  "type": "boolean",
+                  "description": "Create PostgreSQL CRD resources",
+                  "default": false
+                },
+                "secretName": {
+                  "type": "string",
+                  "description": "Secret name for PostgreSQL credentials",
+                  "default": "postgres-user"
+                },
+                "existingSecretName": {
+                  "type": "string",
+                  "description": "Existing secret name created by operator",
+                  "default": ""
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": ["engine"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["backend", "database"],
+      "additionalProperties": false
+    },
+    "service": {
+      "type": "object",
+      "description": "Service configuration",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Service name",
+          "default": "glauth"
+        },
+        "type": {
+          "type": "string",
+          "description": "Service type",
+          "enum": ["ClusterIP", "NodePort", "LoadBalancer", "ExternalName"],
+          "default": "NodePort"
+        },
+        "ports": {
+          "type": "array",
+          "description": "Service port configuration",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Port name"
+              },
+              "internal": {
+                "type": "integer",
+                "description": "Internal port",
+                "minimum": 1,
+                "maximum": 65535
+              },
+              "external": {
+                "type": "integer",
+                "description": "External port",
+                "minimum": 1,
+                "maximum": 65535
+              },
+              "node": {
+                "type": "integer",
+                "description": "NodePort (for NodePort service type)",
+                "minimum": 30000,
+                "maximum": 32767
+              }
+            },
+            "required": ["name", "internal", "external"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["name", "type"],
+      "additionalProperties": false
+    },
+    "serviceAccount": {
+      "type": "object",
+      "description": "Service account configuration",
+      "properties": {
+        "create": {
+          "type": "boolean",
+          "description": "Specifies whether a service account should be created",
+          "default": true
+        },
+        "annotations": {
+          "type": "object",
+          "description": "Annotations to add to the service account",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {}
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the service account to use",
+          "default": ""
+        }
+      },
+      "additionalProperties": false
+    },
+    "podAnnotations": {
+      "type": "object",
+      "description": "Pod annotations",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "default": {}
+    },
+    "podSecurityContext": {
+      "type": "object",
+      "description": "Pod security context",
+      "properties": {
+        "fsGroup": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "runAsUser": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "runAsGroup": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "runAsNonRoot": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true,
+      "default": {}
+    },
+    "securityContext": {
+      "type": "object",
+      "description": "Container security context",
+      "properties": {
+        "capabilities": {
+          "type": "object",
+          "properties": {
+            "drop": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "add": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "readOnlyRootFilesystem": {
+          "type": "boolean"
+        },
+        "runAsNonRoot": {
+          "type": "boolean"
+        },
+        "runAsUser": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true,
+      "default": {}
+    },
+    "ingress": {
+      "type": "object",
+      "description": "Ingress configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable ingress record generation",
+          "default": false
+        },
+        "className": {
+          "type": "string",
+          "description": "IngressClass that will be used",
+          "default": ""
+        },
+        "annotations": {
+          "type": "object",
+          "description": "Additional annotations for the Ingress resource",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {}
+        },
+        "hosts": {
+          "type": "array",
+          "description": "An array with hosts and paths",
+          "items": {
+            "type": "object",
+            "properties": {
+              "host": {
+                "type": "string",
+                "format": "hostname"
+              },
+              "paths": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    },
+                    "pathType": {
+                      "type": "string",
+                      "enum": ["Exact", "Prefix", "ImplementationSpecific"]
+                    }
+                  },
+                  "required": ["path", "pathType"]
+                }
+              }
+            },
+            "required": ["host", "paths"]
+          }
+        },
+        "tls": {
+          "type": "array",
+          "description": "TLS configuration for the Ingress",
+          "items": {
+            "type": "object",
+            "properties": {
+              "secretName": {
+                "type": "string"
+              },
+              "hosts": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "hostname"
+                }
+              }
+            },
+            "required": ["secretName", "hosts"]
+          },
+          "default": []
+        }
+      },
+      "additionalProperties": false
+    },
+    "resources": {
+      "type": "object",
+      "description": "Resource limits and requests",
+      "properties": {
+        "limits": {
+          "type": "object",
+          "properties": {
+            "cpu": {
+              "type": "string",
+              "pattern": "^[0-9]+(m|[0-9]*\\.?[0-9]*)?$"
+            },
+            "memory": {
+              "type": "string",
+              "pattern": "^[0-9]+[KMGT]i?$"
+            }
+          },
+          "additionalProperties": false
+        },
+        "requests": {
+          "type": "object",
+          "properties": {
+            "cpu": {
+              "type": "string",
+              "pattern": "^[0-9]+(m|[0-9]*\\.?[0-9]*)?$"
+            },
+            "memory": {
+              "type": "string",
+              "pattern": "^[0-9]+[KMGT]i?$"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "default": {}
+    },
+    "autoscaling": {
+      "type": "object",
+      "description": "Horizontal Pod Autoscaler configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable Horizontal Pod Autoscaler",
+          "default": false
+        },
+        "minReplicas": {
+          "type": "integer",
+          "description": "Minimum number of replicas",
+          "minimum": 1,
+          "default": 1
+        },
+        "maxReplicas": {
+          "type": "integer",
+          "description": "Maximum number of replicas",
+          "minimum": 1,
+          "default": 100
+        },
+        "targetCPUUtilizationPercentage": {
+          "type": "integer",
+          "description": "Target CPU utilization percentage",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 80
+        },
+        "targetMemoryUtilizationPercentage": {
+          "type": "integer",
+          "description": "Target memory utilization percentage",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "additionalProperties": false
+    },
+    "nodeSelector": {
+      "type": "object",
+      "description": "Node labels for pod assignment",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "default": {}
+    },
+    "tolerations": {
+      "type": "array",
+      "description": "List of node taints to tolerate",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "operator": {
+            "type": "string",
+            "enum": ["Exists", "Equal"]
+          },
+          "value": {
+            "type": "string"
+          },
+          "effect": {
+            "type": "string",
+            "enum": ["NoSchedule", "PreferNoSchedule", "NoExecute"]
+          },
+          "tolerationSeconds": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "default": []
+    },
+    "affinity": {
+      "type": "object",
+      "description": "Affinity rules for pod assignment",
+      "properties": {
+        "nodeAffinity": {
+          "type": "object"
+        },
+        "podAffinity": {
+          "type": "object"
+        },
+        "podAntiAffinity": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "default": {}
+    }
+  },
+  "required": ["replicaCount", "image", "config", "service"],
+  "additionalProperties": false
+} 
