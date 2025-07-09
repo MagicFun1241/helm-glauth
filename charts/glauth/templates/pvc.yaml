@@ -1,4 +1,4 @@
-{{- if .Values.config.storage }}
+{{- if and .Values.config.storage (ne .Values.config.backend.type "config") }}
 {{- if not .Values.config.storage.existingClaim | default false }}
 kind: PersistentVolumeClaim
 apiVersion: v1

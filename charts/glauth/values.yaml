@@ -184,7 +184,7 @@ config:
       # Actual secret name created by the PostgreSQL operator (if different from secretName)
       # Set this to the actual secret name if the operator creates a different name
       # Example: "postgres-user-glauth"
-      existingSecretName:
+      existingSecretName: ""
 
 service:
   name: glauth
