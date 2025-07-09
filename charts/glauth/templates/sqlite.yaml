@@ -1,4 +1,4 @@
-{{- if eq .Values.backend.type "database" }}
+{{- if eq .Values.config.backend.type "database" }}
 {{- if eq .Values.config.database.engine "sqlite" }}
 {{- if .Values.config.database.sqlite.shell | default true }}
 apiVersion: v1 

@@ -1,6 +1,6 @@
-{{- if eq .Values.backend.type "database" }}
-{{- if eq .Values.database.engine "postgres" }}
-{{- if .Values.database.postgres.createResources }}
+{{- if eq .Values.config.backend.type "database" }}
+{{- if eq .Values.config.database.engine "postgres" }}
+{{- if .Values.config.database.postgres.createResources }}
 ---
 apiVersion: db.movetokube.com/v1alpha1
 kind: Postgres
@@ -24,7 +24,7 @@ spec:
   database: {{ include "glauth.fullname" . }}
   privileges: "OWNER"
   role: {{ include "glauth.fullname" . }}
-  secretName: "{{ .Values.database.postgres.secretName | default "postgres-user" }}"
+  secretName: "{{ .Values.config.database.postgres.secretName | default "postgres-user" }}"
   secretTemplate:
     PGHOST: '{{`{{.Host}}`}}'
     PGUSER: '{{`{{.Role}}`}}'
