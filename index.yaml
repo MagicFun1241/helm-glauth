@@ -3,6 +3,30 @@ entries:
   glauth:
   - apiVersion: v2
     appVersion: 2.0.1
+    created: "2025-07-09T21:03:21.958768762Z"
+    description: A Helm chart to host GLAuth in a Kubernetes cluster
+    digest: 6a2f6cd18aef7cad0df08fcbec08beaa61ca528ae28cbc6b1954cba0f38ea2ab
+    home: https://github.com/nnstd/glauth
+    keywords:
+    - ldap
+    - authentication
+    - glauth
+    - directory
+    - identity
+    maintainers:
+    - email: nganzikov@gmail.com
+      name: Nikita Ganzikov
+      url: https://github.com/magicfun1241
+    name: glauth
+    sources:
+    - https://github.com/nnstd/glauth
+    - https://github.com/nnstd/helm-glauth
+    type: application
+    urls:
+    - https://github.com/nnstd/helm-glauth/releases/download/glauth-0.3.6/glauth-0.3.6.tgz
+    version: 0.3.6
+  - apiVersion: v2
+    appVersion: 2.0.1
     created: "2025-07-09T20:47:48.99942584Z"
     description: A Helm chart to host GLAuth in a Kubernetes cluster
     digest: bf0b93c7377916d479c9538549f1fb6269b4fe066cafe6b154857ab07b542bd2
@@ -277,4 +301,4 @@ entries:
     urls:
     - https://github.com/nnstd/helm-glauth/releases/download/glauth-0.1.0/glauth-0.1.0.tgz
     version: 0.1.0
-generated: "2025-07-09T20:47:48.99958996Z"
+generated: "2025-07-09T21:03:21.9589594Z"
