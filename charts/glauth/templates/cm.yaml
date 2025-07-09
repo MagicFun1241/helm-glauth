@@ -3,17 +3,17 @@ kind: ConfigMap
 metadata:
   name: glauth-config
 data:
-{{- if .Values.backend.file }}
+{{- if .Values.config.backend.file }}
   config.cfg: |-
-{{ .Files.Get .Values.backend.file | indent 4 }}
-{{- else if eq .Values.backend.type "config" }}
+{{ .Files.Get .Values.config.backend.file | indent 4 }}
+{{- else if eq .Values.config.backend.type "config" }}
   config.cfg: |-
 {{ tpl (.Files.Get "config/common.cfg") . | indent 4 }}
 {{ tpl (.Files.Get "config/config.cfg") . | indent 4 }}
-{{- else if eq .Values.backend.type "database" }}
+{{- else if eq .Values.config.backend.type "database" }}
   {{ tpl (.Files.Get "config/common.cfg") . | indent 4 }}
 
-  {{- if eq .Values.database.engine "postgres" }}
+  {{- if eq .Values.config.database.engine "postgres" }}
   config.cfg: |-
 {{ tpl (.Files.Get "config/postgres.cfg") . | indent 4 }}
   {{- else }}
