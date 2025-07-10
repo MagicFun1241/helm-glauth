@@ -25,7 +25,7 @@ jobs:
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
       - name: Copy README to charts
-        run: cp README.md charts/
+        run: cp README.md charts/glauth
           
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.7.0
