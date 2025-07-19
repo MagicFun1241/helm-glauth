@@ -748,6 +748,82 @@
       },
       "additionalProperties": false,
       "default": {}
+    },
+    "serviceMonitor": {
+      "type": "object",
+      "description": "ServiceMonitor configuration for Prometheus monitoring",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable ServiceMonitor for Prometheus monitoring",
+          "default": false
+        },
+        "scrapeInterval": {
+          "type": "string",
+          "description": "Scrape interval for metrics collection",
+          "pattern": "^[0-9]+[smhdwy]$",
+          "default": "30s"
+        },
+        "scrapeTimeout": {
+          "type": "string",
+          "description": "Scrape timeout for metrics collection",
+          "pattern": "^[0-9]+[smhdwy]$",
+          "default": "10s"
+        },
+        "honorLabels": {
+          "type": "boolean",
+          "description": "Honor labels from the target",
+          "default": false
+        },
+        "jobLabel": {
+          "type": "string",
+          "description": "Job label to use for the ServiceMonitor",
+          "default": ""
+        },
+        "podTargetLabels": {
+          "type": "array",
+          "description": "Pod target labels to transfer to the target",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "sampleLimit": {
+          "type": "integer",
+          "description": "Sample limit for metrics collection",
+          "minimum": 1
+        },
+        "targetLimit": {
+          "type": "integer",
+          "description": "Target limit for metrics collection",
+          "minimum": 1
+        },
+        "additionalLabels": {
+          "type": "object",
+          "description": "Additional labels to add to the ServiceMonitor",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {}
+        },
+        "relabelings": {
+          "type": "array",
+          "description": "Relabeling rules for metrics",
+          "items": {
+            "type": "object"
+          },
+          "default": []
+        },
+        "metricRelabelings": {
+          "type": "array",
+          "description": "Metric relabeling rules",
+          "items": {
+            "type": "object"
+          },
+          "default": []
+        }
+      },
+      "additionalProperties": false
     }
   },
   "required": ["replicaCount", "image", "config", "service"],
