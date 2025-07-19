@@ -11,14 +11,12 @@ data:
 {{ tpl (.Files.Get "config/common.cfg") . | indent 4 }}
 {{ tpl (.Files.Get "config/config.cfg") . | indent 4 }}
 {{- else if eq .Values.config.backend.type "database" }}
-  {{ tpl (.Files.Get "config/common.cfg") . | indent 4 }}
-
-  {{- if eq .Values.config.database.engine "postgres" }}
   config.cfg: |-
+{{ tpl (.Files.Get "config/common.cfg") . | indent 4 }}
+{{- if eq .Values.config.database.engine "postgres" }}
 {{ tpl (.Files.Get "config/postgres.cfg") . | indent 4 }}
-  {{- else }}
-  config.cfg: |-
+{{- else }}
 {{ tpl (.Files.Get "config/sqlite.cfg") . | indent 4 }}
-  {{- end }}
+{{- end }}
   
 {{- end}}
