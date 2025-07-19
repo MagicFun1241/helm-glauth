@@ -229,6 +229,40 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
+serviceMonitor:
+  # Enable service monitor for Prometheus Operator
+  enabled: false
+
+  # Scrape interval for Prometheus Operator
+  scrapeInterval: "30s"
+
+  # Scrape timeout for Prometheus Operator
+  scrapeTimeout: "10s"
+
+  # Honor labels for Prometheus Operator
+  honorLabels: false
+
+  # Job label for Prometheus Operator
+  jobLabel: ""
+
+  # Pod target labels for Prometheus Operator
+  podTargetLabels: []
+
+  # Sample limit for Prometheus Operator
+  sampleLimit: null
+
+  # Target limit for Prometheus Operator
+  targetLimit: null
+
+  # Additional labels for Prometheus Operator
+  additionalLabels: {}
+
+  # Relabelings for Prometheus Operator
+  relabelings: []
+
+  # Metric relabelings for Prometheus Operator
+  metricRelabelings: []
+
 podAnnotations: {}
 
 podSecurityContext: {}
