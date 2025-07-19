@@ -248,12 +248,6 @@ serviceMonitor:
   # Pod target labels for Prometheus Operator
   podTargetLabels: []
 
-  # Sample limit for Prometheus Operator
-  sampleLimit: null
-
-  # Target limit for Prometheus Operator
-  targetLimit: null
-
   # Additional labels for Prometheus Operator
   additionalLabels: {}
 

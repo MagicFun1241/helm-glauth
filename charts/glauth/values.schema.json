@@ -789,12 +789,12 @@
           "default": []
         },
         "sampleLimit": {
-          "type": "integer",
+          "type": ["integer", "null"],
           "description": "Sample limit for metrics collection",
           "minimum": 1
         },
         "targetLimit": {
-          "type": "integer",
+          "type": ["integer", "null"],
           "description": "Target limit for metrics collection",
           "minimum": 1
         },
