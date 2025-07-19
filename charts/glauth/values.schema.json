@@ -823,6 +823,7 @@
           "default": []
         }
       },
+      "required": ["enabled"],
       "additionalProperties": false
     }
   },
