@@ -27,7 +27,7 @@ spec:
         {{- if and (eq .Values.config.backend.type "database") (eq .Values.config.database.engine "postgres") .Values.config.database.postgres.createResources }}
         envFrom:
         - secretRef:
-            name: {{ .Values.database.postgres.existingSecretName | default (printf "%s-%s" (.Values.database.postgres.secretName | default "postgres-user") (include "glauth.fullname" .)) }}
+            name: {{ .Values.config.database.postgres.existingSecretName | default (printf "%s-%s" (.Values.config.database.postgres.secretName | default "postgres-user") (include "glauth.fullname" .)) }}
         {{- end }}
         livenessProbe:
           exec:
